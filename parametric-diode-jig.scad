@@ -1,13 +1,16 @@
 /* [Basic] */
 
 // The distance between the centres of the two soldering holes
-span = 10;
+span = 7.5;
 
 // The height of the jig
 height = 30;
 
 /* [Fine tuning] */
- 
+
+// Tolerances
+tolerance = 0.2; // Increase all diode diameters by this much because 3D printers are analogue
+
 // Diode body diameter
 diodeBodyDiameter = 2.76;
 
@@ -18,7 +21,7 @@ diodeBodyLength = 3.14;
 diodeLegDiameter = 0.5;
 
 // Let's smoooooth those corners
-cornerRadius = 1;
+cornerRadius = 1.5;
 
 // Render quality - Thingiverse is unhappy if you put this too high
 quality = 60;
@@ -39,14 +42,11 @@ module print_part() {
     }
 }
 
-
 module diodeCutout() {
-    translate([width/2-diodeBodyDiameter/2,width/2,height])
-        rotate([0,90,0]) {
-            cylinder(d = diodeBodyDiameter, h = diodeBodyLength);
-            translate([0,0,diodeBodyDiameter/2-width/2])
-                cylinder(d = diodeLegDiameter, h = span);
-        }
+    translate([0,0,height - (diodeLegDiameter + tolerance)/2 + 0.0001]) {
+        cube([diodeBodyLength, diodeBodyDiameter + tolerance, diodeBodyDiameter + tolerance], center = true);
+        cube([span, diodeLegDiameter + tolerance, diodeLegDiameter + tolerance], center = true);
+    }
 }
 
 module jigBody() {
@@ -56,13 +56,13 @@ module jigBody() {
 
 module crossSection() {
     hull() {
-        translate([cornerRadius,cornerRadius])
+        translate([-(width/2 - cornerRadius), -(width/2 - cornerRadius)])
             circle(r=cornerRadius);
-        translate([width - cornerRadius, cornerRadius])
+        translate([(width/2 - cornerRadius), -(width/2 - cornerRadius)])
             circle(r=cornerRadius);
-        translate([cornerRadius, width - cornerRadius])
+        translate([-(width/2 - cornerRadius), (width/2 - cornerRadius)])
             circle(r=cornerRadius);
-        translate([width - cornerRadius, width - cornerRadius])
+        translate([(width/2 - cornerRadius), (width/2 - cornerRadius)])
             circle(r=cornerRadius);
     }
 }
