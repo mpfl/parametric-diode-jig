@@ -9,7 +9,7 @@ height = 30;
 /* [Fine tuning] */
 
 // Tolerances
-tolerance = 0.2; // Increase all diode diameters by this much because 3D printers are analogue
+tolerance = 0.1; // Increase all diode diameters by this much because 3D printers are analogue
 
 // Diode body diameter
 diodeBodyDiameter = 2.76;
@@ -29,7 +29,7 @@ quality = 60;
 /* [ Hidden ] */
 
 // The acutal width of the jig, taking diode leg diameter into account
-width = span - 2 * diodeLegDiameter;
+width = span; // - 2 * diodeLegDiameter;
 
 $fn = quality;
 
@@ -39,7 +39,15 @@ module print_part() {
     difference () {
         jigBody();
         diodeCutout();
+        diodeLegCutouts();
     }
+}
+
+module diodeLegCutouts() {
+    translate([width/2, 0, height/2])
+        cube([diodeLegDiameter + tolerance, diodeLegDiameter + tolerance, height], center = true);
+    translate([-width/2, 0, height/2])
+        cube([diodeLegDiameter + tolerance, diodeLegDiameter + tolerance, height], center = true);
 }
 
 module diodeCutout() {
